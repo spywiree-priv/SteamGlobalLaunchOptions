@@ -4,7 +4,7 @@ go 1.22.5
 
 require (
 	github.com/Jleagle/steam-go v0.0.0-20231027203227-3dc26c48c3d2
-	github.com/alecthomas/kong v1.2.1
+	github.com/alecthomas/kong v1.5.0
 	github.com/mdouchement/vdf v0.0.0-20180601133716-2d1e7ef80670
 	github.com/shirou/gopsutil/v4 v4.24.9
 )
