@@ -20,7 +20,7 @@ func parsePath(path string) string {
 }
 
 func getDefaultUserId() string {
-	dir, err := os.ReadDir(parsePath((SteamUserdata)))
+	dir, err := os.ReadDir(parsePath(SteamUserdata))
 	if err != nil {
 		return ""
 	}

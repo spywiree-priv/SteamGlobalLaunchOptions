@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os/exec"
 	"path/filepath"
@@ -11,7 +10,7 @@ import (
 	"github.com/shirou/gopsutil/v4/process"
 )
 
-var ErrProcessNotFound = fmt.Errorf("process not found")
+var ErrProcessNotFound = errors.New("process not found")
 
 func killProcess(name string) ([]string, error) {
 	processes, err := process.Processes()
@@ -35,12 +34,7 @@ func killProcess(name string) ([]string, error) {
 	return nil, ErrProcessNotFound
 }
 
-func ptr[T any](value T) *T {
-	return &value
-}
-
 func main() {
-	defaultUserId := getDefaultUserId()
 	_ = kong.Parse(&CLI,
 		kong.Name("SteamGlobalLaunchOptions"),
 		kong.Description("A CLI tool to apply launch options for all Steam games at once."),
@@ -51,20 +45,15 @@ func main() {
 				Summary: true,
 			},
 		),
-		kong.Vars{"default_user_id": defaultUserId},
+		kong.Vars{"default_user_id": getDefaultUserId()},
 	)
 	if CLI.UserId == "" {
 		log.Fatalln("Default user id have not been found. You must provide user id.")
 	}
 
-	if CLI.RestoreSteam == nil {
-		CLI.RestoreSteam = ptr(true)
-	}
 	args, err := killProcess("steam")
 	if errors.Is(err, ErrProcessNotFound) {
-		if CLI.RestoreSteam == nil {
-			*CLI.RestoreSteam = false
-		}
+		CLI.RestoreSteam = false
 	} else if err != nil {
 		log.Fatalln(err)
 	}
@@ -72,13 +61,13 @@ func main() {
 	err = applyLaunchOptions(
 		CLI.Value,
 		filepath.Join(parsePath(SteamUserdata), CLI.UserId, ConfigFilePath),
-		CLI.Overrite,
+		CLI.Overwrite,
 	)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if *CLI.RestoreSteam {
+	if CLI.RestoreSteam {
 		if len(args) <= 1 {
 			_ = exec.Command("steam").Start()
 		} else {
