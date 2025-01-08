@@ -11,7 +11,7 @@ import (
 
 var re = regexp.MustCompile(`(\".*?\")(?:\t\t(\".*\"))?`)
 
-func ParseText(r io.Reader) (KeyValue, error) {
+func ParseText(r io.Reader) (*KeyValue, error) {
 	var root KeyValue
 	level := 0
 
@@ -56,5 +56,5 @@ func ParseText(r io.Reader) (KeyValue, error) {
 		parent.Children = append(parent.Children, KeyValue{Key: key, Value: value})
 	}
 
-	return root, nil
+	return &root, nil
 }
