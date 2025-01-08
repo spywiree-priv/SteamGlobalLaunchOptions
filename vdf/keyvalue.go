@@ -70,6 +70,15 @@ func (kv *KeyValue) HasChild(key string) bool {
 	return false
 }
 
+func (kv *KeyValue) HasNonZeroChild(key string) bool {
+	for child := range kv.ChildrenIter() {
+		if child.Key == key && child.Value.ValueOrZero() != "" {
+			return true
+		}
+	}
+	return false
+}
+
 func (kv *KeyValue) ChildrenIter() iter.Seq[*KeyValue] {
 	return func(yield func(*KeyValue) bool) {
 		for i := range kv.Children {

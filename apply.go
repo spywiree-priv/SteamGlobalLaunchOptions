@@ -42,7 +42,7 @@ func ApplyLaunchOptions(value, path string, overwrite bool) error {
 	}
 
 	for child := range apps.ChildrenIter() {
-		if overwrite || !child.HasChild("LaunchOptions") {
+		if overwrite || !child.HasNonZeroChild("LaunchOptions") {
 			child.SetChild(vdf.KeyValue{
 				Key:   "LaunchOptions",
 				Value: null.StringFrom(value),
