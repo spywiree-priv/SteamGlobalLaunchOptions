@@ -1,0 +1,13 @@
+name: release
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    uses: spywiree-priv/meta/.github/workflows/release.yml@main
