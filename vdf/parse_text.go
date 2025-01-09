@@ -23,10 +23,10 @@ func ParseText(r io.Reader) (*KeyValue, error) {
 		}
 
 		if line == "{" {
-			level += 1
+			level++
 			continue
 		} else if line == "}" {
-			level -= 1
+			level--
 			continue
 		}
 
@@ -47,7 +47,7 @@ func ParseText(r io.Reader) (*KeyValue, error) {
 		}
 
 		parent := &root
-		for i := 0; i < level-1; i++ {
+		for range level - 1 {
 			if len(parent.Children) == 0 {
 				parent.Children = append(parent.Children, KeyValue{})
 			}
