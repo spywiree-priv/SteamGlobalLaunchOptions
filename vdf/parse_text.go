@@ -2,14 +2,19 @@ package vdf
 
 import (
 	"bufio"
+	"bytes"
 	"io"
 	"regexp"
-	"strings"
+	"unsafe"
 
 	"github.com/guregu/null/v5"
 )
 
 var re = regexp.MustCompile(`(\".*?\")(?:\t\t(\".*\"))?`)
+
+func bytesToString(b []byte) string {
+	return unsafe.String(unsafe.SliceData(b), len(b))
+}
 
 func ParseText(r io.Reader) (*KeyValue, error) {
 	var root KeyValue
@@ -17,21 +22,21 @@ func ParseText(r io.Reader) (*KeyValue, error) {
 
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
-		if line == "" || strings.HasPrefix(line, "/") {
+		line := bytes.TrimSpace(sc.Bytes())
+		if len(line) == 0 || bytes.HasPrefix(line, []byte("/")) {
 			continue
 		}
 
-		if line == "{" {
+		if bytes.Equal(line, []byte("{")) {
 			level++
 			continue
-		} else if line == "}" {
+		} else if bytes.Equal(line, []byte("}")) {
 			level--
 			continue
 		}
 
-		match := re.FindStringSubmatch(line)
-		if match == nil {
+		match := re.FindStringSubmatch(bytesToString(line))
+		if len(match) < 3 {
 			continue
 		}
 		key := Unquote(match[1])
