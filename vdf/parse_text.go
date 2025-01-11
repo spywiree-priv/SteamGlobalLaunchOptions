@@ -5,16 +5,12 @@ import (
 	"bytes"
 	"io"
 	"regexp"
-	"unsafe"
 
 	"github.com/guregu/null/v5"
+	"github.com/spywiree-priv/SteamGlobalLaunchOptions/vdf/internal"
 )
 
 var re = regexp.MustCompile(`(\".*?\")(?:\t\t(\".*\"))?`)
-
-func bytesToString(b []byte) string {
-	return unsafe.String(unsafe.SliceData(b), len(b))
-}
 
 func ParseText(r io.Reader) (*KeyValue, error) {
 	var root KeyValue
@@ -35,7 +31,7 @@ func ParseText(r io.Reader) (*KeyValue, error) {
 			continue
 		}
 
-		match := re.FindStringSubmatch(bytesToString(line))
+		match := re.FindStringSubmatch(internal.BytesToString(line))
 		if len(match) < 3 {
 			continue
 		}
